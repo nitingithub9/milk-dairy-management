@@ -1,0 +1,14 @@
+.invoice-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.invoice-card {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}

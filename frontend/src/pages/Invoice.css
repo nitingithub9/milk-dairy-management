@@ -1,0 +1,38 @@
+.viewbill-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;  /* Full screen height */
+  overflow-y: auto; /* Enables vertical scrolling */
+  padding: 20px;
+}
+
+.viewbill-card {
+  background: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-width: 500px;
+  width: 100%;
+  overflow-y: auto; /* Ensures scrolling within the card */
+  max-height: 90vh; /* Prevents content from overflowing */
+}
+
+h2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.table-container {
+  overflow-x: auto; /* Allows horizontal scrolling for tables */
+  max-height: 300px; /* Restricts table height */
+}
+
+.alert-info {
+  padding: 10px;
+  background-color: #e3f2fd;
+  border-radius: 5px;
+}

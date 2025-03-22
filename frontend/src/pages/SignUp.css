@@ -1,0 +1,85 @@
+/* Ensure the page layout is centered */
+.signup-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 50; /* Keep it centered without extra space */
+  background: linear-gradient(to right, #dfe9f3, #ffffff);
+}
+
+/* Ensure the signup box has a fixed width and height like Login */
+.signup-card {
+  background: white;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+  width: 400px;  /* Same width as Login */
+  height: auto;  /* Prevent excessive height */
+  text-align: center;
+  overflow: visible; /* Ensures the border-radius is visible */
+
+}
+/* Title styling */
+.signup-title {
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 22px;
+}
+
+/* Input field group */
+.input-group {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+/* Input labels */
+.input-group label {
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+/* Styling for input fields */
+.input-group input {
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    width: 100%;
+}
+
+/* Button styling */
+.signup-button {
+    width: 100%;
+    padding: 12px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    font-size: 18px;
+    cursor: pointer;
+    margin-top: 12px;
+    transition: background 0.3s;
+}
+
+.signup-button:hover {
+    background-color: #45a049;
+}
+
+/* Adjust the text for Login link */
+.redirect-text {
+    margin-top: 18px;
+    font-size: 17px;
+}
+
+/* Styling for Login link */
+.login-link {
+    color: #007BFF;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.login-link:hover {
+    text-decoration: underline;
+}

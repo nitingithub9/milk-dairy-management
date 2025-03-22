@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "mazire-milk-dairy",
+  "private_key_id": "7f29d90ba7a4f87ca72c58bff94522bc8ce1c0ab",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvAIBADANBgkqhkiG9w0BAQEFAASCBKYwggSiAgEAAoIBAQCqF9038uMLclA0\nlYyiqLYfu7yN8BprrYuCmz5ZSo4OJUIMyFBqmK5e3pGj9WZcRqMM5oF7Ipjdb9hx\nC9eV/3wJhHlCNdrPhKyN/xie5Bp3KnPD5mN+r6NVJDK1JkT/sP7QS23gkpceQ22X\nsImw5hUkAupC5wnY+YUFCnCVbFM62eJnKeZTOMQLD5+5u3H1k/CtsKxJk3eGNPUQ\nl3j4fdn+evp7QpN2nHQAa6zHEJQg23x8U5sk1s+JT6n9i2ZNaCgWbHNC6FsOQXYl\nipDMEaNTeOSaFBcOKkQUJuN+pooayah5kfwlWigmr5NxBOjzRnKdIUSZM+fZb0YN\n9JO8VxoDAgMBAAECggEABKd7vG2vRRhNR6W9Dj6Xd2hFEw1r7Isi+IUXvNOitSB+\nMswe2Idqqu/H0sNQ+6mFJhdGJ9mux7DT89fvf9pm3oh3nEgjFMvN+SlgnkG+094K\nAo/g62pZQr01qVSC6gv6v6eTZJ0DlXTpNbpuFaZeE5ySXTRl/tyFdzmRLvgw5w4/\nnm5vXRCG/VxvFEALcC79vyYSQx+IB3tpMqYCgxxVZ67qorSfXy+f0ly65HA62X4r\neE4XueRhsdwDB00HKO8oObp7TB2RtbtWUbX4JRKRuOwqk2zhNimjE4XYN6p4MaER\nSvzZF19CG0CDFf9Cx5abkBTsoTXKJpCY4a8XJccA/QKBgQDplpQXOxTZ/gKkViq1\nQJGG3hiqeCcU1m1pAvh315hOcANp/6X52/I6a374dVA4GkjS4EHQ3jwqgqvBaX3R\n+XrW/QdonVhxkMEUmCc+piyMLA3U5eCWOoLj3d64iixRFwz4c6iSzbY01waa8/G2\nHxY8phqJYZnNt0btV0fhBiFJfQKBgQC6abbeyBYC/FPYQrzehftLH1EgPKFhqWFA\nx+s+m20zPHKmOknAT2ztH0+Ep5fnGd2rgDMQRIrjtW45hgf6VwGrGVdhh/2/Yczb\n4wQPa3cql/sYAqK+4TCJnLA95noBOxKtVab4rUyca1ZxCUZSK1k/S9tFk1Vy3mSK\nmyiWEYtJfwKBgA9VURdNS4sbv3SmK1uGh4cA4UGfbYFSqg/wn/rN7jOH6tF0dKK4\nK2hmUglhOgjUwN8G1Ysua2im9ztU/2tfIw8lwOy/F2UtCV+etUTJh7cT1Tyacmmq\nIZlvoQUgHNSd3L4aaYBpfIJvcwGM7dr0o3MLvEY0X/I/C6rcxd0hl+HJAoGAd1J/\nye7NmC+oA8AEYXPlvNpY9YeZzYe8RtkxTavzpF5HDPw2hTDSCp6GKeWVKEq4R7UR\n+pHFTaiu24ddx/K1kK3x7u47kKurk/ymdrBVYSBTi7T0M7a1eQChF55V7j+/3s/6\nxyc26NEUTdqf9qzkvc1ymACNK7ALL2XN/vFP9UUCgYA2XDVC5oh3XCa+ABD3Epgd\n7qOAHneMauEM1AQzkTl0FWhLwxdPaWyfoY5e7HbldEGJva8AI0/8bbSOYG1ziPEs\nCuzd2lh6ZEh9wLRigQOxCKIldS4gF9gfOl3DBYtHj02WpnNiAexxRBGJ9w7iUSFg\njzIAuUojj7Q770giuFuFlQ==\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-fbsvc@mazire-milk-dairy.iam.gserviceaccount.com",
+  "client_id": "114340030076269174432",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fbsvc%40mazire-milk-dairy.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

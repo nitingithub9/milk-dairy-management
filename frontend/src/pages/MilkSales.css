@@ -1,0 +1,121 @@
+/* Enable vertical scrolling for this page only */
+.sales-container {
+  max-width: 600px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  overflow-y: auto;
+  max-height: 90vh; /* Ensures scrolling inside the container */
+}
+
+/* Center align everything inside */
+.sales-card {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Title styling */
+.title {
+  display: flex;
+  align-items: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  text-align: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+/* Ensure correct icon size */
+.title img {
+  width: 35px;
+  height: auto;
+}
+
+/* Dropdown and input field styling */
+.dropdown,
+.input-field {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Style the Add Sale button */
+.add-btn {
+  width: 100%;
+  background-color: #007bff;
+  color: white;
+  padding: 10px;
+  font-size: 1rem;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.add-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Month container with smaller, styled headers */
+.month-container {
+  margin-top: 10px;
+}
+
+.month-header {
+  background-color: #f8f9fa;
+  padding: 8px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+/* Sale entry container */
+.sale-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f5f5f5;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+}
+
+/* Align Edit & Delete buttons properly */
+.action-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.edit-btn {
+  background-color: #ffcc00;
+  color: black;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.edit-btn:hover {
+  background-color: #e6b800;
+}
+
+.delete-btn:hover {
+  background-color: #c82333;
+}

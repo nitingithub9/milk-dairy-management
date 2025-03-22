@@ -1,0 +1,126 @@
+.dashboard-container {
+  text-align: center;
+  padding: 20px;
+  overflow-y: auto; /* Enables scrolling */
+  max-height: 90vh;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer & Edge */
+}
+
+.dashboard-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+.dashboard-title {
+  text-align: center;
+  font-size: 26px;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 30px; /* Added margin for better spacing */
+}
+
+.dashboard-icon {
+  width: 38px;
+  height: 38px;
+  vertical-align: middle;
+}
+
+/* Grid Layout: Ensures 4 items per row with better spacing */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Fixed 4 columns for horizontal layout */
+  gap: 20px; /* Reduced gap for better use of space */
+  justify-items: center;
+  align-items: center;
+  padding: 0 20px; /* Added padding to prevent items from touching the edges */
+}
+
+/* Smaller Circles & Icons */
+.icon-container {
+  width: 120px; /* Reduced from 130px */
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f9f9f9, #e4e4e4);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.icon-container img {
+  width: 65px;
+  height: auto;
+  transition: transform 0.2s ease-in-out;
+}
+
+.dashboard-card:hover .icon-container {
+  transform: scale(1.05);
+  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.2);
+}
+
+.dashboard-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none !important;  /* Removes underline */
+  color: black;
+  transition: transform 0.2s, box-shadow 0.3s ease-in-out;
+}
+
+.dashboard-card h5 {
+  font-size: 16px;
+  margin-top: 10px;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  transition: color 0.2s ease-in-out;
+  text-decoration: none !important;  /* Ensures no underline */
+}
+
+.dashboard-card:hover h5 {
+  color: #007bff;
+  text-decoration: none !important; /* Keeps hover effect clean */
+}
+
+/* Responsive Fix for Tablets */
+@media (max-width: 1024px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(3, 1fr); /* 3 columns for tablets */
+  }
+}
+
+/* Responsive Fix for Mobile */
+@media (max-width: 768px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr); /* 2 columns for mobile */
+  }
+
+  .icon-container {
+    width: 110px;
+    height: 110px;
+  }
+
+  .icon-container img {
+    width: 60px;
+  }
+}
+
+/* Responsive Fix for Small Screens */
+@media (max-width: 480px) {
+  .dashboard-grid {
+    grid-template-columns: repeat(1, 1fr); /* 1 column for small screens */
+  }
+
+  .icon-container {
+    width: 100px;
+    height: 100px;
+  }
+
+  .icon-container img {
+    width: 55px;
+  }
+}
