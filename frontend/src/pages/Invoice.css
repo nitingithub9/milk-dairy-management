@@ -36,3 +36,22 @@ h2 {
   background-color: #e3f2fd;
   border-radius: 5px;
 }
+/* Hide scrollbar for .viewbill-container */
+.viewbill-container {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer & Edge */
+}
+
+.viewbill-container::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
+/* Hide scrollbar for .viewbill-card */
+.viewbill-card {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer & Edge */
+}
+
+.viewbill-card::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}

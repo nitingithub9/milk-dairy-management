@@ -97,10 +97,20 @@
     position: absolute;
     top: 60px;
     right: 0;
-    background: white;
+    background: rgba(155, 146, 226, 0.95); /* Match the navbar background color */
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     padding: 10px;
     border-radius: 5px;
+    z-index: 1000; /* Ensure it appears above other content */
+  }
+
+  .nav-links a {
+    color: #333; /* Ensure link color is consistent */
+    padding: 8px 12px;
+  }
+
+  .nav-links a:hover {
+    color: #edfb6e; /* Ensure hover color is consistent */
   }
 
   .nav-links.open {

@@ -40,16 +40,16 @@ const Dashboard = () => {
         Dashboard
       </h2>
 
-      <div className="dashboard-grid">
+      <div className="dashboard-grid navigation-bar">
         {/* Show "Grant Access" card only for Admins */}
-        {isAdmin && (
+        {/* {isAdmin && (
           <Link to="/grant-access" className="dashboard-card">
             <div className="icon-container">
               <img src="/icons/admin-icon.jpg" alt="Admin Access" />
             </div>
             <h5>Grant Access</h5>
           </Link>
-        )}
+        )} */}
 
         {/* Render other dashboard items */}
         {dashboardItems.map((item, index) => (
@@ -73,10 +73,9 @@ const dashboardItems = [
   { path: "/branches", icon: "/icons/map-icon.png", title: "Branches" },
   { path: "/societies", icon: "/icons/building-icon.png", title: "Societies" },
   { path: "/payments", icon: "/icons/money-bag-icon.png", title: "Payments" },
-  { path: "/view-bills", icon: "/icons/invoice-icon.jpg", title: "Generate Invoice" },
+  { path: "/generate-invoice", icon: "/icons/invoice-icon.jpg", title: "Generate Invoice" },
   { path: "/invoice", icon: "/icons/bill-icon.jpg", title: "View Bills" },
   { path: "/grant-access", icon: "/icons/admin-icon.jpg", title: "Grant Access " },
-
   { path: "/admin-users", icon: "/icons/admin-users.png", title: "Admin Users" },
 ];
 

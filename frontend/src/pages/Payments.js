@@ -13,19 +13,13 @@ function Payments() {
   const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
 
   // State for payment details
-  const [totalAmount, setTotalAmount] = useState(0);
-  const [pendingAmount, setPendingAmount] = useState(0);
-  const [advanceAmount, setAdvanceAmount] = useState(0);
-  const [paidAmount, setPaidAmount] = useState(0);
-  const [paymentStatus, setPaymentStatus] = useState("N/A");
-  const [paymentInput, setPaymentInput] = useState("");
-
-  useEffect(() => {
-    document.body.style.overflow = "auto"; // Allow scrolling on this page only
-    return () => {
-      document.body.style.overflow = "hidden"; // Reset when leaving
-    };
-  }, []);
+  const [totalAmount, setTotalAmount] = useState(0); // Total sales amount
+  const [totalAmountToBePaid, setTotalAmountToBePaid] = useState(0); // Total amount to be paid (after adjustments)
+  const [pendingAmount, setPendingAmount] = useState(0); // Pending balance from previous month
+  const [advanceAmount, setAdvanceAmount] = useState(0); // Advance balance from previous month
+  const [paidAmount, setPaidAmount] = useState(0); // Paid amount in the current month
+  // const [paymentStatus, setPaymentStatus] = useState("N/A"); // Payment status
+  const [paymentInput, setPaymentInput] = useState(""); // Input for paid amount
 
   // Fetch Branches
   useEffect(() => {
@@ -40,37 +34,48 @@ function Payments() {
 
   // Fetch Societies based on selected branch
   useEffect(() => {
-    if (!selectedBranch) return setSocieties([]);
+    if (!selectedBranch) {
+      setSocieties([]); // Reset societies if no branch is selected
+      return;
+    }
+
     const fetchSocieties = async () => {
       const snapshot = await get(ref(database, `societies/${selectedBranch}`));
       if (snapshot.exists()) {
         setSocieties(Object.entries(snapshot.val()).map(([id, name]) => ({ id, name })));
       } else {
-        setSocieties([]);
+        setSocieties([]); // Reset societies if no data is found
       }
     };
+
     fetchSocieties();
   }, [selectedBranch]);
 
   // Fetch Customers based on selected society
   useEffect(() => {
-    if (!selectedSociety) return setCustomers([]);
+    if (!selectedSociety) {
+      setCustomers([]); // Reset customers if no society is selected
+      return;
+    }
+
     const fetchCustomers = async () => {
       const snapshot = await get(ref(database, `customers/${selectedBranch}/${selectedSociety}`));
       if (snapshot.exists()) {
         setCustomers(Object.entries(snapshot.val()).map(([id, data]) => ({ id, ...data })));
       } else {
-        setCustomers([]);
+        setCustomers([]); // Reset customers if no data is found
       }
     };
-    fetchCustomers();
-  }, [selectedSociety, selectedBranch]);
 
-  // Fetch Payment Details
+    fetchCustomers();
+  }, [selectedBranch, selectedSociety]);
+
+  // Fetch Payment Details and Previous Month's Balances
   useEffect(() => {
     if (!selectedCustomer || !selectedMonth) return;
 
     const fetchPaymentDetails = async () => {
+      // Fetch current month's payment details
       const snapshot = await get(ref(database, `payments/${selectedCustomer}/${selectedMonth}`));
 
       if (snapshot.exists()) {
@@ -78,17 +83,35 @@ function Payments() {
         setPendingAmount(pendingBalance);
         setAdvanceAmount(advanceBalance);
         setPaidAmount(paidAmount);
-        setPaymentStatus(status);
+        // setPaymentStatus(status);
       } else {
-        setPendingAmount(0);
-        setAdvanceAmount(0);
+        // If no payment details exist for the current month, fetch the previous month's balances
+        const previousMonth = new Date(new Date(selectedMonth).setMonth(new Date(selectedMonth).getMonth() - 1))
+          .toISOString()
+          .slice(0, 7);
+
+        const previousMonthSnapshot = await get(ref(database, `payments/${selectedCustomer}/${previousMonth}`));
+
+        if (previousMonthSnapshot.exists()) {
+          const { pendingBalance = 0, advanceBalance = 0 } = previousMonthSnapshot.val();
+          setPendingAmount(pendingBalance);
+          setAdvanceAmount(advanceBalance);
+        } else {
+          setPendingAmount(0);
+          setAdvanceAmount(0);
+        }
+
         setPaidAmount(0);
-        setPaymentStatus("N/A");
+        // setPaymentStatus("N/A");
       }
+
+      // Calculate Total Amount to Be Paid
+      const totalToBePaid = totalAmount + pendingAmount - advanceAmount;
+      setTotalAmountToBePaid(totalToBePaid);
     };
 
     fetchPaymentDetails();
-  }, [selectedCustomer, selectedMonth]);
+  }, [selectedCustomer, selectedMonth, totalAmount, pendingAmount, advanceAmount]);
 
   // Calculate Total Sales Amount
   const calculateTotalAmount = async () => {
@@ -113,21 +136,38 @@ function Payments() {
     }
 
     const newPaidAmount = paidAmount + paymentToAdd;
-    let newPendingBalance = totalAmount + pendingAmount - advanceAmount - newPaidAmount;
-    let newAdvanceBalance = newPendingBalance < 0 ? Math.abs(newPendingBalance) : 0;
-    newPendingBalance = newPendingBalance > 0 ? newPendingBalance : 0;
-    const status = newPendingBalance === 0 ? "Paid" : "Pending";
 
+    // Calculate the remaining amount after payment
+    const remainingAmount = totalAmountToBePaid - newPaidAmount;
+
+    let newAdvanceBalance = 0;
+    let newPendingBalance = 0;
+    let status = "Pending";
+
+    if (remainingAmount < 0) {
+      // If paid amount is more than the total amount to be paid, it's an advance
+      newAdvanceBalance = Math.abs(remainingAmount);
+      status = "Paid";
+    } else if (remainingAmount > 0) {
+      // If paid amount is less than the total amount to be paid, it's a pending balance
+      newPendingBalance = remainingAmount;
+    } else {
+      // If paid amount is exactly the total amount to be paid
+      status = "Paid";
+    }
+
+    // Update state
     setPendingAmount(newPendingBalance);
     setAdvanceAmount(newAdvanceBalance);
     setPaidAmount(newPaidAmount);
-    setPaymentStatus(status);
+    // setPaymentStatus(status);
 
+    // Save to database
     await set(ref(database, `payments/${selectedCustomer}/${selectedMonth}`), {
       pendingBalance: newPendingBalance,
       advanceBalance: newAdvanceBalance,
       paidAmount: newPaidAmount,
-      status
+      status,
     });
 
     alert("Payment recorded successfully!");
@@ -137,36 +177,56 @@ function Payments() {
   return (
     <div className="payments-container">
       <div className="payments-card">
-        
-        {/* Move title inside the card */}
         <h2 className="title">💰 Manage Payments</h2>
-  
+
+        {/* Branch Dropdown */}
         <select className="dropdown" onChange={(e) => setSelectedBranch(e.target.value)} value={selectedBranch}>
           <option value="">Select a Branch</option>
           {branches.map((branch) => (
             <option key={branch.id} value={branch.id}>{branch.name}</option>
           ))}
         </select>
-  
+
+        {/* Society Dropdown */}
+        <select className="dropdown" onChange={(e) => setSelectedSociety(e.target.value)} value={selectedSociety}>
+          <option value="">Select a Society</option>
+          {societies.map((society) => (
+            <option key={society.id} value={society.id}>{society.name}</option>
+          ))}
+        </select>
+
+        {/* Customer Dropdown */}
+        <select className="dropdown" onChange={(e) => setSelectedCustomer(e.target.value)} value={selectedCustomer}>
+          <option value="">Select a Customer</option>
+          {customers.map((customer) => (
+            <option key={customer.id} value={customer.id}>{customer.name}</option>
+          ))}
+        </select>
+
+        {/* Month Selector */}
         <input type="month" className="dropdown" value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)} />
-  
+
+        {/* Calculate Total Button */}
         <button className="btn btn-primary" onClick={calculateTotalAmount}>Calculate Total</button>
-  
+
+        {/* Payment Summary */}
         <div className="summary">
           <div className="summary-item">Total Amount: ₹{totalAmount}</div>
+          <div className="summary-item">Total Amount to Be Paid: ₹{totalAmountToBePaid}</div>
           <div className="summary-item">Pending Balance: ₹{pendingAmount}</div>
           <div className="summary-item">Advance Balance: ₹{advanceAmount}</div>
           <div className="summary-item">Total Paid: ₹{paidAmount}</div>
-          <div className="summary-item"><strong>Status:</strong> {paymentStatus}</div>
+          {/* <div className="summary-item"><strong>Status:</strong> {paymentStatus}</div> */}
         </div>
-  
-        <input type="number" className="form-input" placeholder="Enter Payment Amount" value={paymentInput} onChange={(e) => setPaymentInput(e.target.value)} />
-  
+
+        {/* Payment Input */}
+        <input type="number" className="form-input" placeholder="Enter Paid Amount" value={paymentInput} onChange={(e) => setPaymentInput(e.target.value)} />
+
+        {/* Record Payment Button */}
         <button className="btn btn-success" onClick={recordPayment}>Record Payment</button>
-  
-      </div> 
-    </div> 
-  );  
+      </div>
+    </div>
+  );
 }
 
 export default Payments;
