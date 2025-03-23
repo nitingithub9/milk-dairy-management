@@ -3,11 +3,13 @@
   "version": "1.0.0",
   "description": "A simple web-based system to manage daily milk sales, customers, branches, and payments. Features invoice generation with a dairy logo, Google Pay QR code for payments, and an admin-only dashboard.",
   "main": "index.js",
-  "scripts": {
-    "start": "set NODE_OPTIONS=--openssl-legacy-provider && react-scripts start",
-    "build": "set NODE_OPTIONS=--openssl-legacy-provider && react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+
+"scripts": {
+  "start": "react-scripts start",
+  "build": "react-scripts build",
+  "test": "react-scripts test",
+  "eject": "react-scripts eject"
+
   },
   "keywords": [],
   "author": "",
