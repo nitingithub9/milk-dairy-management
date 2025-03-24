@@ -43,11 +43,12 @@
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 8px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   outline: none;
 }
 
 /* Add Button */
+/* Add Space Above Save Button */
 .add-branch-btn {
   width: 100%;
   background: linear-gradient(135deg, #6e8efb, #a777e3);
@@ -58,7 +59,9 @@
   font-weight: bold;
   cursor: pointer;
   transition: background 0.3s ease;
+  margin-top: 15px;  /* Adds space between input and button */
 }
+
 
 .add-branch-btn:hover {
   background: linear-gradient(135deg, #5a7de3, #9459e3);

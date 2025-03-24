@@ -13,13 +13,12 @@ function Payments() {
   const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
 
   // State for payment details
-  const [totalAmount, setTotalAmount] = useState(0); // Total sales amount
-  const [totalAmountToBePaid, setTotalAmountToBePaid] = useState(0); // Total amount to be paid (after adjustments)
-  const [pendingAmount, setPendingAmount] = useState(0); // Pending balance from previous month
-  const [advanceAmount, setAdvanceAmount] = useState(0); // Advance balance from previous month
-  const [paidAmount, setPaidAmount] = useState(0); // Paid amount in the current month
-  // const [paymentStatus, setPaymentStatus] = useState("N/A"); // Payment status
-  const [paymentInput, setPaymentInput] = useState(""); // Input for paid amount
+  const [totalAmount, setTotalAmount] = useState(0);
+  const [totalAmountToBePaid, setTotalAmountToBePaid] = useState(0);
+  const [pendingAmount, setPendingAmount] = useState(0);
+  const [advanceAmount, setAdvanceAmount] = useState(0);
+  const [paidAmount, setPaidAmount] = useState(0);
+  const [paymentInput, setPaymentInput] = useState("");
 
   // Fetch Branches
   useEffect(() => {
@@ -35,7 +34,8 @@ function Payments() {
   // Fetch Societies based on selected branch
   useEffect(() => {
     if (!selectedBranch) {
-      setSocieties([]); // Reset societies if no branch is selected
+      setSocieties([]);
+      setSelectedSociety("");
       return;
     }
 
@@ -44,7 +44,7 @@ function Payments() {
       if (snapshot.exists()) {
         setSocieties(Object.entries(snapshot.val()).map(([id, name]) => ({ id, name })));
       } else {
-        setSocieties([]); // Reset societies if no data is found
+        setSocieties([]);
       }
     };
 
@@ -54,7 +54,8 @@ function Payments() {
   // Fetch Customers based on selected society
   useEffect(() => {
     if (!selectedSociety) {
-      setCustomers([]); // Reset customers if no society is selected
+      setCustomers([]);
+      setSelectedCustomer("");
       return;
     }
 
@@ -63,55 +64,24 @@ function Payments() {
       if (snapshot.exists()) {
         setCustomers(Object.entries(snapshot.val()).map(([id, data]) => ({ id, ...data })));
       } else {
-        setCustomers([]); // Reset customers if no data is found
+        setCustomers([]);
       }
     };
 
     fetchCustomers();
   }, [selectedBranch, selectedSociety]);
 
-  // Fetch Payment Details and Previous Month's Balances
+  // Reset payment details when customer or month changes
   useEffect(() => {
-    if (!selectedCustomer || !selectedMonth) return;
-
-    const fetchPaymentDetails = async () => {
-      // Fetch current month's payment details
-      const snapshot = await get(ref(database, `payments/${selectedCustomer}/${selectedMonth}`));
-
-      if (snapshot.exists()) {
-        const { pendingBalance = 0, advanceBalance = 0, paidAmount = 0, status = "N/A" } = snapshot.val();
-        setPendingAmount(pendingBalance);
-        setAdvanceAmount(advanceBalance);
-        setPaidAmount(paidAmount);
-        // setPaymentStatus(status);
-      } else {
-        // If no payment details exist for the current month, fetch the previous month's balances
-        const previousMonth = new Date(new Date(selectedMonth).setMonth(new Date(selectedMonth).getMonth() - 1))
-          .toISOString()
-          .slice(0, 7);
-
-        const previousMonthSnapshot = await get(ref(database, `payments/${selectedCustomer}/${previousMonth}`));
-
-        if (previousMonthSnapshot.exists()) {
-          const { pendingBalance = 0, advanceBalance = 0 } = previousMonthSnapshot.val();
-          setPendingAmount(pendingBalance);
-          setAdvanceAmount(advanceBalance);
-        } else {
-          setPendingAmount(0);
-          setAdvanceAmount(0);
-        }
-
-        setPaidAmount(0);
-        // setPaymentStatus("N/A");
-      }
-
-      // Calculate Total Amount to Be Paid
-      const totalToBePaid = totalAmount + pendingAmount - advanceAmount;
-      setTotalAmountToBePaid(totalToBePaid);
-    };
-
-    fetchPaymentDetails();
-  }, [selectedCustomer, selectedMonth, totalAmount, pendingAmount, advanceAmount]);
+    if (!selectedCustomer || !selectedMonth) {
+      setTotalAmount(0);
+      setTotalAmountToBePaid(0);
+      setPendingAmount(0);
+      setAdvanceAmount(0);
+      setPaidAmount(0);
+      return;
+    }
+  }, [selectedCustomer, selectedMonth]);
 
   // Calculate Total Sales Amount
   const calculateTotalAmount = async () => {
@@ -125,19 +95,65 @@ function Payments() {
       });
     }
     setTotalAmount(total);
+    calculateTotalToBePaid(total);
+  };
+
+  // Calculate total amount to be paid
+  const calculateTotalToBePaid = (currentMonthTotal) => {
+    if (!selectedCustomer || !selectedMonth) return;
+
+    const fetchBalances = async () => {
+      // Get previous month's balances
+      const prevMonth = new Date(new Date(selectedMonth).setMonth(new Date(selectedMonth).getMonth() - 1));
+      const prevMonthFormatted = new Date(prevMonth).toISOString().slice(0, 7);
+      
+      const prevPaymentSnapshot = await get(ref(database, `payments/${selectedCustomer}/${prevMonthFormatted}`));
+      
+      let prevPending = 0;
+      let prevAdvance = 0;
+      
+      if (prevPaymentSnapshot.exists()) {
+        prevPending = prevPaymentSnapshot.val().pendingBalance || 0;
+        prevAdvance = prevPaymentSnapshot.val().advanceBalance || 0;
+      }
+      
+      // Get current month's payment if exists
+      const currentPaymentSnapshot = await get(ref(database, `payments/${selectedCustomer}/${selectedMonth}`));
+      let currentPaid = 0;
+      
+      if (currentPaymentSnapshot.exists()) {
+        currentPaid = currentPaymentSnapshot.val().paidAmount || 0;
+      }
+      
+      // Calculate total to be paid (current month sales + previous pending - previous advance)
+      const totalToBePaid = currentMonthTotal + prevPending - prevAdvance;
+      
+      // Update state
+      setPendingAmount(prevPending);
+      setAdvanceAmount(prevAdvance);
+      setPaidAmount(currentPaid);
+      setTotalAmountToBePaid(totalToBePaid);
+    };
+    
+    fetchBalances();
   };
 
   // Record Payment Functionality
   const recordPayment = async () => {
     const paymentToAdd = parseFloat(paymentInput);
     if (isNaN(paymentToAdd) || paymentToAdd <= 0) {
-      alert("Please enter a valid payment amount.");
+      alert("Please enter a valid payment amount");
+      return;
+    }
+
+    // Check if payment already exists for this month
+    const paymentSnapshot = await get(ref(database, `payments/${selectedCustomer}/${selectedMonth}`));
+    if (paymentSnapshot.exists() && paymentSnapshot.val().paidAmount > 0) {
+      alert("Only one payment can be recorded per month");
       return;
     }
 
     const newPaidAmount = paidAmount + paymentToAdd;
-
-    // Calculate the remaining amount after payment
     const remainingAmount = totalAmountToBePaid - newPaidAmount;
 
     let newAdvanceBalance = 0;
@@ -145,14 +161,14 @@ function Payments() {
     let status = "Pending";
 
     if (remainingAmount < 0) {
-      // If paid amount is more than the total amount to be paid, it's an advance
+      // Paid more than required (advance)
       newAdvanceBalance = Math.abs(remainingAmount);
       status = "Paid";
     } else if (remainingAmount > 0) {
-      // If paid amount is less than the total amount to be paid, it's a pending balance
+      // Paid less than required (pending)
       newPendingBalance = remainingAmount;
     } else {
-      // If paid amount is exactly the total amount to be paid
+      // Paid exactly the required amount
       status = "Paid";
     }
 
@@ -160,7 +176,6 @@ function Payments() {
     setPendingAmount(newPendingBalance);
     setAdvanceAmount(newAdvanceBalance);
     setPaidAmount(newPaidAmount);
-    // setPaymentStatus(status);
 
     // Save to database
     await set(ref(database, `payments/${selectedCustomer}/${selectedMonth}`), {
@@ -168,6 +183,7 @@ function Payments() {
       advanceBalance: newAdvanceBalance,
       paidAmount: newPaidAmount,
       status,
+      timestamp: new Date().toISOString()
     });
 
     alert("Payment recorded successfully!");
@@ -180,7 +196,11 @@ function Payments() {
         <h2 className="title">💰 Manage Payments</h2>
 
         {/* Branch Dropdown */}
-        <select className="dropdown" onChange={(e) => setSelectedBranch(e.target.value)} value={selectedBranch}>
+        <select 
+          className="dropdown" 
+          onChange={(e) => setSelectedBranch(e.target.value)} 
+          value={selectedBranch}
+        >
           <option value="">Select a Branch</option>
           {branches.map((branch) => (
             <option key={branch.id} value={branch.id}>{branch.name}</option>
@@ -188,7 +208,12 @@ function Payments() {
         </select>
 
         {/* Society Dropdown */}
-        <select className="dropdown" onChange={(e) => setSelectedSociety(e.target.value)} value={selectedSociety}>
+        <select 
+          className="dropdown" 
+          onChange={(e) => setSelectedSociety(e.target.value)} 
+          value={selectedSociety}
+          disabled={!selectedBranch}
+        >
           <option value="">Select a Society</option>
           {societies.map((society) => (
             <option key={society.id} value={society.id}>{society.name}</option>
@@ -196,7 +221,12 @@ function Payments() {
         </select>
 
         {/* Customer Dropdown */}
-        <select className="dropdown" onChange={(e) => setSelectedCustomer(e.target.value)} value={selectedCustomer}>
+        <select 
+          className="dropdown" 
+          onChange={(e) => setSelectedCustomer(e.target.value)} 
+          value={selectedCustomer}
+          disabled={!selectedSociety}
+        >
           <option value="">Select a Customer</option>
           {customers.map((customer) => (
             <option key={customer.id} value={customer.id}>{customer.name}</option>
@@ -204,26 +234,49 @@ function Payments() {
         </select>
 
         {/* Month Selector */}
-        <input type="month" className="dropdown" value={selectedMonth} onChange={(e) => setSelectedMonth(e.target.value)} />
+        <input 
+          type="month" 
+          className="dropdown" 
+          value={selectedMonth} 
+          onChange={(e) => setSelectedMonth(e.target.value)} 
+        />
 
         {/* Calculate Total Button */}
-        <button className="btn btn-primary" onClick={calculateTotalAmount}>Calculate Total</button>
+        <button 
+          className="btn btn-primary" 
+          onClick={calculateTotalAmount}
+          disabled={!selectedCustomer}
+        >
+          Calculate Total
+        </button>
 
         {/* Payment Summary */}
         <div className="summary">
-          <div className="summary-item">Total Amount: ₹{totalAmount}</div>
-          <div className="summary-item">Total Amount to Be Paid: ₹{totalAmountToBePaid}</div>
-          <div className="summary-item">Pending Balance: ₹{pendingAmount}</div>
-          <div className="summary-item">Advance Balance: ₹{advanceAmount}</div>
-          <div className="summary-item">Total Paid: ₹{paidAmount}</div>
-          {/* <div className="summary-item"><strong>Status:</strong> {paymentStatus}</div> */}
+          <div className="summary-item">Total Sales Amount: ₹{totalAmount.toFixed(2)}</div>
+          <div className="summary-item">Total Amount to Be Paid: ₹{totalAmountToBePaid.toFixed(2)}</div>
+          <div className="summary-item">Pending Balance: ₹{pendingAmount.toFixed(2)}</div>
+          <div className="summary-item">Advance Balance: ₹{advanceAmount.toFixed(2)}</div>
+          <div className="summary-item">Total Paid: ₹{paidAmount.toFixed(2)}</div>
         </div>
 
         {/* Payment Input */}
-        <input type="number" className="form-input" placeholder="Enter Paid Amount" value={paymentInput} onChange={(e) => setPaymentInput(e.target.value)} />
+        <input 
+          type="number" 
+          className="form-input" 
+          placeholder="Enter Paid Amount" 
+          value={paymentInput} 
+          onChange={(e) => setPaymentInput(e.target.value)}
+          disabled={!selectedCustomer || totalAmountToBePaid <= 0}
+        />
 
         {/* Record Payment Button */}
-        <button className="btn btn-success" onClick={recordPayment}>Record Payment</button>
+        <button 
+          className="btn btn-success" 
+          onClick={recordPayment}
+          disabled={!paymentInput || !selectedCustomer || totalAmountToBePaid <= 0}
+        >
+          Record Payment
+        </button>
       </div>
     </div>
   );

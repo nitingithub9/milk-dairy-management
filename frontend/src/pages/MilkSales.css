@@ -8,8 +8,48 @@
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
   max-height: 90vh; /* Ensures scrolling inside the container */
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  }
+
+  /* Sale Entry Styling - Ensuring Consistency */
+.sale-entry {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f5f5f5;
+  padding: 8px;
+  margin-top: 5px;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  flex-wrap: nowrap;
 }
 
+
+  /* Ensure text does not push buttons */
+.sale-text {
+  flex-grow: 1;  /* Ensures text takes available space */
+  white-space: nowrap; /* Prevents breaking into multiple lines */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 65%;  /* Limits text width to keep buttons fixed */
+}
+
+/* Buttons Container - Fixed Width */
+.action-buttons {
+  display: flex;
+  gap: 6px;
+  min-width: 120px;  /* This ensures Cow & Buffalo entries have the same width */
+  justify-content: flex-end;
+}
+
+/* Ensure Consistent Button Size */
+.edit-btn, .delete-btn {
+  font-size: 0.8rem;
+  padding: 5px 10px;
+  min-width: 55px;  /* Keeps buttons uniform */
+  text-align: center;
+}
 /* Center align everything inside */
 .sales-card {
   display: flex;
@@ -68,49 +108,23 @@
 
 .month-header {
   background-color: #f8f9fa;
-  padding: 8px;
-  font-size: 1.2rem;
+  padding: 6px;
+  font-size: 1rem;
   font-weight: bold;
   text-align: center;
   cursor: pointer;
   border-radius: 5px;
 }
 
-/* Sale entry container */
-.sale-entry {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: #f5f5f5;
-  padding: 8px;
-  margin-top: 5px;
-  border-radius: 5px;
-  font-size: 0.9rem;
+
+.sale-entry span {
+  flex-grow: 1; /* Ensures text takes available space */
+  white-space: nowrap; /* Prevents breaking into multiple lines */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* Align Edit & Delete buttons properly */
-.action-buttons {
-  display: flex;
-  gap: 10px;
-}
 
-.edit-btn {
-  background-color: #ffcc00;
-  color: black;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-.delete-btn {
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  padding: 5px 10px;
-  border-radius: 3px;
-  cursor: pointer;
-}
 
 .edit-btn:hover {
   background-color: #e6b800;
@@ -119,3 +133,9 @@
 .delete-btn:hover {
   background-color: #c82333;
 }
+
+
+.sales-container::-webkit-scrollbar {
+  display: none;
+}
+

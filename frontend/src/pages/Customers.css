@@ -29,7 +29,8 @@
 /* Button Container */
 .customer-actions {
   display: flex;
-  gap: 14px;
+  gap: 6px;
+  justify-content: flex-end;
 }
 
 /* Edit Button */
@@ -37,8 +38,8 @@
   background: #ffcc00;
   color: black;
   border: none;
-  padding: 8px 14px;
-  border-radius: 5px;
+  padding: 4px 10px;
+  border-radius: 2px;
   cursor: pointer;
   font-weight: bold;
   transition: background 0.3s ease-in-out;
@@ -53,8 +54,8 @@
   background: #dc3545;
   color: white;
   border: none;
-  padding: 8px 14px;
-  border-radius: 5px;
+  padding: 4px 10px;
+  border-radius: 2px;
   cursor: pointer;
   font-weight: bold;
   transition: background 0.3s ease-in-out;
@@ -71,6 +72,8 @@
   justify-content: center;
   align-items: center;
   height: calc(100vh - 80px);
+  overflow-y: auto;
+  scrollbar-width: none;
 }
 
 /* Card Styling */
@@ -143,4 +146,26 @@
 
 .submit-btn:hover {
   background: linear-gradient(135deg, #5a7de3, #9459e3);
+}
+/* Save Button - Green Box */
+.btn-save {
+  background: #28a745; /* Green background */
+  color: white;
+  border: none;
+  padding: 4px 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.3s ease-in-out;
+  border: 2px solid #218838; /* Green border for the box effect */
+}
+
+.btn-save:hover {
+  background: #218838; /* Darker green on hover */
+}
+/* Centering Save Button */
+.save-button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px; /* Adds some spacing */
 }

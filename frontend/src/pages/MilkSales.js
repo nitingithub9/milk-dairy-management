@@ -9,9 +9,9 @@ function MilkSales() {
   const [selectedSociety, setSelectedSociety] = useState("");
   const [customers, setCustomers] = useState([]);
   const [selectedCustomer, setSelectedCustomer] = useState("");
-  const [milkType, setMilkType] = useState("Cow");
+  const [milkType] = useState("Cow");
   const [quantity, setQuantity] = useState("");
-  const [ratePerLiter, setRatePerLiter] = useState(50);
+  const [ratePerLiter] = useState(50);
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [sales, setSales] = useState({});
   const [editingSale, setEditingSale] = useState(null);

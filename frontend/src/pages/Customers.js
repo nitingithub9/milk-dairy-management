@@ -11,7 +11,7 @@ function Customers() {
   const [customerName, setCustomerName] = useState("");
   const [customerPhone, setCustomerPhone] = useState("");
   const [milkType, setMilkType] = useState("Cow");
-  const [editingCustomer, setEditingCustomer] = useState(null);
+  const [editCustomerId, setEditCustomerId] = useState(null);
   const [editedCustomerName, setEditedCustomerName] = useState("");
   const [editedCustomerPhone, setEditedCustomerPhone] = useState("");
   const [editedMilkType, setEditedMilkType] = useState("");
@@ -77,32 +77,33 @@ function Customers() {
 
   // Enable Edit Mode
   const handleEditCustomer = (customer) => {
-    setEditingCustomer(customer.id);
+    setEditCustomerId(customer.id);
     setEditedCustomerName(customer.name);
     setEditedCustomerPhone(customer.phone);
     setEditedMilkType(customer.milkType);
   };
 
   // Save Edited Customer
-  const handleSaveEdit = async (id) => {
+  const handleSaveEdit = async () => {
     if (!editedCustomerName.trim() || editedCustomerPhone.length !== 10) return alert("❌ Invalid Name or Phone Number!");
 
-    const customerRef = ref(database, `customers/${selectedBranch}/${selectedSociety}/${id}`);
+    const customerRef = ref(database, `customers/${selectedBranch}/${selectedSociety}/${editCustomerId}`);
     await set(customerRef, { name: editedCustomerName, phone: editedCustomerPhone, milkType: editedMilkType });
 
     setCustomers(
       customers.map((customer) =>
-        customer.id === id ? { ...customer, name: editedCustomerName, phone: editedCustomerPhone, milkType: editedMilkType } : customer
+        customer.id === editCustomerId
+          ? { ...customer, name: editedCustomerName, phone: editedCustomerPhone, milkType: editedMilkType }
+          : customer
       )
     );
-    setEditingCustomer(null);
+    setEditCustomerId(null);
     alert("✅ Customer details updated successfully!");
   };
 
-  // Delete Customer with Confirmation
+  // Delete Customer
   const handleDeleteCustomer = async (id, name) => {
-    const confirmDelete = window.confirm(`⚠️ Are you sure you want to delete customer: ${name}?`);
-    if (!confirmDelete) return;
+    if (!window.confirm(`⚠️ Delete customer: ${name}?`)) return;
 
     const customerRef = ref(database, `customers/${selectedBranch}/${selectedSociety}/${id}`);
     await remove(customerRef);
@@ -115,7 +116,6 @@ function Customers() {
       <div className="customers-card">
         <h2 className="title">🧑‍🤝‍🧑 Manage Customers</h2>
 
-        {/* Branch Selection */}
         <select className="dropdown" onChange={(e) => setSelectedBranch(e.target.value)} value={selectedBranch}>
           <option value="">Select a Branch</option>
           {branches.map((branch) => (
@@ -123,7 +123,6 @@ function Customers() {
           ))}
         </select>
 
-        {/* Society Selection */}
         {selectedBranch && (
           <select className="dropdown" onChange={(e) => setSelectedSociety(e.target.value)} value={selectedSociety}>
             <option value="">Select a Society</option>
@@ -133,34 +132,40 @@ function Customers() {
           </select>
         )}
 
-        {/* Add Customer Form */}
-        {selectedSociety && (
-          <form onSubmit={handleAddCustomer} className="customer-form">
-            <input type="text" className="form-input" placeholder="Customer Name" value={customerName} onChange={(e) => setCustomerName(e.target.value)} required />
-            <input type="text" className="form-input" placeholder="Phone Number (10 digits)" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} required />
-            <select className="dropdown" value={milkType} onChange={(e) => setMilkType(e.target.value)}>
-              <option value="Cow">Cow Milk</option>
-              <option value="Buffalo">Buffalo Milk</option>
-            </select>
-            <button type="submit" className="submit-btn">Add Customer</button>
-          </form>
-        )}
+        <form onSubmit={handleAddCustomer} className="customer-form">
+          <input type="text" className="form-input" placeholder="Customer Name" value={customerName} onChange={(e) => setCustomerName(e.target.value)} required />
+          <input type="text" className="form-input" placeholder="Phone Number (10 digits)" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} required />
+          <select className="dropdown" value={milkType} onChange={(e) => setMilkType(e.target.value)}>
+            <option value="Cow">Cow Milk</option>
+            <option value="Buffalo">Buffalo Milk</option>
+          </select>
+          <button type="submit" className="submit-btn">Add Customer</button>
+        </form>
 
-        {/* Customer List */}
         <ul className="list-group">
           {customers.map((customer) => (
             <li key={customer.id} className="list-group-item">
-              {editingCustomer === customer.id ? (
+              {editCustomerId === customer.id ? (
                 <>
                   <input type="text" className="form-input" value={editedCustomerName} onChange={(e) => setEditedCustomerName(e.target.value)} />
                   <input type="text" className="form-input" value={editedCustomerPhone} onChange={(e) => setEditedCustomerPhone(e.target.value)} />
-                  <button className="btn btn-success" onClick={() => handleSaveEdit(customer.id)}>Save</button>
+                  <select className="dropdown" value={editedMilkType} onChange={(e) => setEditedMilkType(e.target.value)}>
+                    <option value="Cow">Cow Milk</option>
+                    <option value="Buffalo">Buffalo Milk</option>
+                  </select>
+                  {/* <button className="btn-save" onClick={handleSaveEdit}>Save</button> */}
+                  <div className="save-button-container">
+                    <button className="btn-save" onClick={handleSaveEdit}>Save</button>
+                  </div>
+
                 </>
               ) : (
                 <>
                   {customer.name} ({customer.phone}) - {customer.milkType}
-                  <button className="btn btn-warning" onClick={() => handleEditCustomer(customer)}>Edit</button>
-                  <button className="btn btn-danger" onClick={() => handleDeleteCustomer(customer.id, customer.name)}>Delete</button>
+                  <div className="customer-actions">
+                    <button className="btn-edit" onClick={() => handleEditCustomer(customer)}>Edit</button>
+                    <button className="btn-delete" onClick={() => handleDeleteCustomer(customer.id, customer.name)}>Delete</button>
+                  </div>
                 </>
               )}
             </li>
